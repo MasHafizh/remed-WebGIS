@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/HasilJangkauan_1.js"></script>
+        <script src="data/JaringanJalan_2.js"></script>
+        <script src="data/JangkauanBangunan_3.js"></script>
+        <script src="data/PointSaranaKesehatan_4.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_Positronretina_0');
+        map.getPane('pane_Positronretina_0').style.zIndex = 400;
+        var layer_Positronretina_0 = L.tileLayer('https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png', {
+            pane: 'pane_Positronretina_0',
+            opacity: 1.0,
+            attribution: '<a href="https://cartodb.com/basemaps/">Map tiles by CartoDB, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_Positronretina_0;
+        map.addLayer(layer_Positronretina_0);
+        function pop_HasilJangkauan_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Kecamatan</strong><br />' + (feature.properties['WADMKC'] !== null ? autolinker.link(feature.properties['WADMKC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Jangkauan Service Area (km)</strong><br />' + (feature.properties['Kode'] !== null ? autolinker.link(feature.properties['Kode'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_HasilJangkauan_1_0(feature) {
+            switch(String(feature.properties['Kode'])) {
+                case '400 meter':
+                    return {
+                pane: 'pane_HasilJangkauan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '800 meter':
+                    return {
+                pane: 'pane_HasilJangkauan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '> 800 meter':
+                    return {
+                pane: 'pane_HasilJangkauan_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_HasilJangkauan_1');
+        map.getPane('pane_HasilJangkauan_1').style.zIndex = 401;
+        map.getPane('pane_HasilJangkauan_1').style['mix-blend-mode'] = 'normal';
+        var layer_HasilJangkauan_1 = new L.geoJson(json_HasilJangkauan_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_HasilJangkauan_1',
+            layerName: 'layer_HasilJangkauan_1',
+            pane: 'pane_HasilJangkauan_1',
+            onEachFeature: pop_HasilJangkauan_1,
+            style: style_HasilJangkauan_1_0,
+        });
+        bounds_group.addLayer(layer_HasilJangkauan_1);
+        map.addLayer(layer_HasilJangkauan_1);
+        function pop_JaringanJalan_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+        }
+
+        function style_JaringanJalan_2_0() {
+            return {
+                pane: 'pane_JaringanJalan_2',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_JaringanJalan_2');
+        map.getPane('pane_JaringanJalan_2').style.zIndex = 402;
+        map.getPane('pane_JaringanJalan_2').style['mix-blend-mode'] = 'normal';
+        var layer_JaringanJalan_2 = new L.geoJson(json_JaringanJalan_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_JaringanJalan_2',
+            layerName: 'layer_JaringanJalan_2',
+            pane: 'pane_JaringanJalan_2',
+            onEachFeature: pop_JaringanJalan_2,
+            style: style_JaringanJalan_2_0,
+        });
+        bounds_group.addLayer(layer_JaringanJalan_2);
+        map.addLayer(layer_JaringanJalan_2);
+        function pop_JangkauanBangunan_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Kecamatan</strong><br />' + (feature.properties['service ar'] !== null ? autolinker.link(feature.properties['service ar'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Jangkauan (km)</strong><br />' + (feature.properties['service _1'] !== null ? autolinker.link(feature.properties['service _1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_JangkauanBangunan_3_0(feature) {
+            switch(String(feature.properties['service _1'])) {
+                case '400 meter':
+                    return {
+                pane: 'pane_JangkauanBangunan_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,231,37,1.0)',
+                interactive: false,
+            }
+                    break;
+                case '800 meter':
+                    return {
+                pane: 'pane_JangkauanBangunan_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(33,144,141,1.0)',
+                interactive: false,
+            }
+                    break;
+                case '> 800 meter':
+                    return {
+                pane: 'pane_JangkauanBangunan_3',
+                stroke: false, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(68,1,84,1.0)',
+                interactive: false,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_JangkauanBangunan_3');
+        map.getPane('pane_JangkauanBangunan_3').style.zIndex = 403;
+        map.getPane('pane_JangkauanBangunan_3').style['mix-blend-mode'] = 'normal';
+        var layer_JangkauanBangunan_3 = new L.geoJson(json_JangkauanBangunan_3, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_JangkauanBangunan_3',
+            layerName: 'layer_JangkauanBangunan_3',
+            pane: 'pane_JangkauanBangunan_3',
+            onEachFeature: pop_JangkauanBangunan_3,
+            style: style_JangkauanBangunan_3_0,
+        });
+        bounds_group.addLayer(layer_JangkauanBangunan_3);
+        map.addLayer(layer_JangkauanBangunan_3);
+        function pop_PointSaranaKesehatan_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Sarana Kesehatan</strong><br />' + (feature.properties['Keterangan'] !== null ? autolinker.link(feature.properties['Keterangan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Foto</strong><br />' + (feature.properties['Foto'] !== null ? '<img src="images/' + String(feature.properties['Foto']).replace(/[\\\/:]/g, '_').trim() + '">' : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PointSaranaKesehatan_4_0(feature) {
+            switch(String(feature.properties['Keterangan'])) {
+                case 'Klinik Pondok Kasih':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(255,217,1,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSKESMAS':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSKESMAS GAYUNGAN':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSKESMAS JEMURSARI':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Kebonsari':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas pembantu Jambangan':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Pembantu Pagesangan':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSTU Dukuh Menanggal':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RS Bhakti Rahayu':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RS Bhakti Rahayu Surabaya':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RSI JEMURSARI':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RSIA Cempaka Putih Permata':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Rumah Sakit Bhayangkara':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Balai Kesehatan Mata':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 10.4,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        function style_PointSaranaKesehatan_4_1(feature) {
+            switch(String(feature.properties['Keterangan'])) {
+                case 'Klinik Pondok Kasih':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(255,217,1,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,217,1,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSKESMAS':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSKESMAS GAYUNGAN':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSKESMAS JEMURSARI':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Kebonsari':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas pembantu Jambangan':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Puskesmas Pembantu Pagesangan':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'PUSTU Dukuh Menanggal':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(51,160,44,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,160,44,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RS Bhakti Rahayu':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RS Bhakti Rahayu Surabaya':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RSI JEMURSARI':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'RSIA Cempaka Putih Permata':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Rumah Sakit Bhayangkara':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Balai Kesehatan Mata':
+                    return {
+                pane: 'pane_PointSaranaKesehatan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(227,26,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_PointSaranaKesehatan_4');
+        map.getPane('pane_PointSaranaKesehatan_4').style.zIndex = 404;
+        map.getPane('pane_PointSaranaKesehatan_4').style['mix-blend-mode'] = 'normal';
+        var layer_PointSaranaKesehatan_4 = new L.geoJson.multiStyle(json_PointSaranaKesehatan_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PointSaranaKesehatan_4',
+            layerName: 'layer_PointSaranaKesehatan_4',
+            pane: 'pane_PointSaranaKesehatan_4',
+            onEachFeature: pop_PointSaranaKesehatan_4,
+            pointToLayers: [function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_PointSaranaKesehatan_4_0(feature));
+            },function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_PointSaranaKesehatan_4_1(feature));
+            },
+        ]});
+        bounds_group.addLayer(layer_PointSaranaKesehatan_4);
+        map.addLayer(layer_PointSaranaKesehatan_4);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Point Sarana Kesehatan<br /><table><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_KlinikPondokKasih0.png" /></td><td>Klinik Pondok Kasih</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_PuskesmasSiwalankerto1.png" /></td><td>Puskesmas Siwalankerto</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_PuskesmasGayungan2.png" /></td><td>Puskesmas Gayungan</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_PuskesmasJemursari3.png" /></td><td>Puskesmas Jemursari</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_PuskesmasKebonsari4.png" /></td><td>Puskesmas Kebonsari</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_PuskesmaspembantuJambangan5.png" /></td><td>Puskesmas pembantu Jambangan</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_PuskesmasPembantuPagesangan6.png" /></td><td>Puskesmas Pembantu Pagesangan</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_PustuDukuhMenanggal7.png" /></td><td>Pustu Dukuh Menanggal</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_RSBhaktiRahayu8.png" /></td><td>RS Bhakti Rahayu</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_RSBhaktiRahayuSurabaya9.png" /></td><td>RS Bhakti Rahayu Surabaya</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_RSIJemursari10.png" /></td><td>RSI Jemursari</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_RSIACempakaPutihPermata11.png" /></td><td>RSIA Cempaka Putih Permata</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_RumahSakitBhayangkara12.png" /></td><td>Rumah Sakit Bhayangkara</td></tr><tr><td style="text-align: center;"><img src="legend/PointSaranaKesehatan_4_RSMataMasyarakat13.png" /></td><td>RS Mata Masyarakat</td></tr></table>': layer_PointSaranaKesehatan_4,'Jangkauan Bangunan<br /><table><tr><td style="text-align: center;"><img src="legend/JangkauanBangunan_3_400meter0.png" /></td><td>400 meter</td></tr><tr><td style="text-align: center;"><img src="legend/JangkauanBangunan_3_800meter1.png" /></td><td>800 meter</td></tr><tr><td style="text-align: center;"><img src="legend/JangkauanBangunan_3_800meter2.png" /></td><td>> 800 meter</td></tr></table>': layer_JangkauanBangunan_3,'<img src="legend/JaringanJalan_2.png" /> Jaringan Jalan': layer_JaringanJalan_2,'Hasil Jangkauan<br /><table><tr><td style="text-align: center;"><img src="legend/HasilJangkauan_1_400meter0.png" /></td><td>400 meter</td></tr><tr><td style="text-align: center;"><img src="legend/HasilJangkauan_1_800meter1.png" /></td><td>800 meter</td></tr><tr><td style="text-align: center;"><img src="legend/HasilJangkauan_1_800meter2.png" /></td><td>> 800 meter</td></tr></table>': layer_HasilJangkauan_1,"Positron (retina)": layer_Positronretina_0,}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
